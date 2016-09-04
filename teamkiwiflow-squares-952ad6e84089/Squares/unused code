@@ -1,0 +1,154 @@
+var aview : NSView = NSView()
+aview.wantsLayer = true
+aview.acceptsTouchEvents = true
+aview.layer?.backgroundColor = NSColor.redColor().CGColor
+aview.frame = CGRectMake(100, 100, 100, 100)
+
+
+
+
+
+//        var image = NSImage(byReferencingFile: "/Users/ben/fruit.jpg")
+//        let inputImage1 = NSImage(named:"00001000_640x480.png")
+//        let imageview1 = NSImageView()
+//        view.window?.setFrame(NSMakeRect(20, 20, inputImage1!.size.width, inputImage1!.size.height), display: true, animate: true)
+//        imageview1.frame = NSMakeRect(20,20,inputImage1!.size.width,inputImage1!.size.height);
+//        imageview1.image = inputImage1
+//        window?.contentView!.frame=imageview1.frame
+//        view.frame=imageview1.frame
+//        view.window?.setFrame(imageview1.frame, display: true)
+//        view.addSubview(imageview1)
+
+//        var image = NSImage(named:"00001000_640x480.png")
+//        var inputImage = NSImage(named:"00001000_640x480.png")
+//        let toonFilter = CannyEdgeDetection()
+//        let toonFilter = ShiTomasiFeatureDetector()
+//        let toonFilter = ThresholdSobelEdgeDetection()
+//        let toonFilter = NobleCornerDetector()
+//        let toonFilter = HarrisCornerDetector()
+//
+//        let filteredImage = inputImage!.filterWithOperation(toonFilter)
+//        filteredImage.backgroundColor = NSColor.clearColor()
+//
+//        let imageview = NSImageView()
+//        view.window?.setFrame(NSMakeRect(20, 20, filteredImage.size.width/3, filteredImage.size.height/3), display: true, animate: true)
+//        imageview.frame = view.frame
+//        imageview.image = filteredImage
+//        imageview.alphaValue = 0.5
+//        view.addSubview(imageview)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import Cocoa
+//import GPUImage
+
+class FlipView : NSView {
+override var flipped:Bool {
+get {
+return false
+}
+}
+}
+
+class ViewController: NSViewController {
+
+@IBOutlet weak var imageViewOutlet: NSView?
+
+override func viewDidLoad() {
+}
+
+override func mouseDown(theEvent: NSEvent) {
+var click: CGPoint?
+click = theEvent.locationInWindow
+let rect : NSRect = (view.window?.convertRectToScreen(NSMakeRect(click!.x-50, click!.y, 50, 50)))!
+view.window?.addChildWindow(createNewWindow(rect), ordered: NSWindowOrderingMode.Above)
+}
+
+override func touchesBeganWithEvent(event: NSEvent) {
+
+}
+
+func CGPointFlipped(point: CGPoint, bounds: CGRect) -> CGPoint {
+return CGPointMake(point.x, CGRectGetMaxY(bounds)-point.y);
+}
+
+func CGRectFlipped(rect: CGRect, bounds: CGRect) -> CGRect {
+return CGRectMake(CGRectGetMinX(rect),
+CGRectGetMaxY((bounds))-CGRectGetMaxY(rect),
+CGRectGetWidth(rect),
+CGRectGetHeight(rect));
+}
+
+override func viewDidAppear() {
+let inputImage1 = NSImage(named:"00001000_640x480.png")
+let imageview1 = NSImageView()
+
+//        view.window?.setFrame(NSMakeRect(0, 0, inputImage1!.size.width, inputImage1!.size.height), display: true, animate: false)
+//        imageViewOutlet?.frame = NSMakeRect(0, 0, inputImage1!.size.width, inputImage1!.size.height)
+
+//        imageview1.frame = NSMakeRect(0,0,inputImage1!.size.width,inputImage1!.size.height);
+imageview1.frame = NSMakeRect(imageview1.frame.minX,imageview1.frame.minY,inputImage1!.size.width,inputImage1!.size.height);
+imageview1.image = inputImage1
+//        window?.contentView!.frame = imageview1.frame
+view.frame=imageview1.frame
+view.addSubview(imageview1)
+
+let myidl = idl.init(idlpath: "/Users/ben/temp/idldata/brainwash_test.idl")
+let lazyMapCollection = myidl.idl.values
+let componentArray = Array(lazyMapCollection)
+//        var thisrect = componentArray[0][0]
+for thisrect in componentArray[0] {
+let arect : NSRect = NSMakeRect(CGFloat(thisrect[0]),CGFloat(thisrect[1]),CGFloat(thisrect[2]),CGFloat(thisrect[3]))
+var convertedRect = NSMakeRect(arect.minX, arect.minY-27, arect.width-arect.minX, arect.height-arect.minY)
+//            convertedRect = (imageViewOutlet?.convertRect(convertedRect, fromView:view.window?.contentView))!
+//            convertedRect = CGRectFlipped(convertedRect, bounds: (view.window?.frame)!)
+
+convertedRect = (view.window?.convertRectToScreen(convertedRect))!
+convertedRect = CGRectFlipped(convertedRect, bounds: (imageViewOutlet?.frame)!)
+
+view.window?.addChildWindow(createNewWindow(convertedRect), ordered: NSWindowOrderingMode.Above)
+}
+}
+
+func createNewWindow(rect: NSRect) -> NSWindow {
+let newWindow = NSWindow(contentRect: rect, styleMask: NSResizableWindowMask|NSClosableWindowMask|NSFullSizeContentViewWindowMask,
+backing: NSBackingStoreType.Buffered, defer: false)
+newWindow.opaque = false
+newWindow.hasShadow = false
+newWindow.movableByWindowBackground = true
+//        newWindow.contentView?.alphaValue=0.0
+newWindow.backgroundColor = NSColor(calibratedHue: 1.0, saturation: 1.0, brightness: 1.0, alpha: 0.4)
+return newWindow
+}
+
+override var representedObject: AnyObject? {
+didSet {
+// Update the view, if already loaded.
+}
+}
+
+
+}
+
+
+
+
+
+
+
+nc.addObserver(self, selector: "printValue:", name: "printValue", object: nil)
+
+let userInfo:Dictionary<String,String> = notification.userInfo as! Dictionary<String,String>
+
+let item = userInfo["value"]! as String
